@@ -29,9 +29,9 @@ app.MapPost("/CadPost", async (HttpContext content) =>
 {
     using var reader = new StreamReader(content.Request.Body);
     var body = await reader.ReadToEndAsync();
-    var info = JsonSerializer.Deserialize<skeleton.Posts>(body);
+    var info = JsonSerializer.Deserialize<skeleton.PostsUser>(body);
 
-    new Reaq.Posts(info.desc, info.Image, info.PostID, info.User, info.likes, info.date);
+    new Reaq.Posts(info.Posts, info.ID);
 
     var returned = await Reaq.Posts.PostMessage();
 
@@ -42,9 +42,11 @@ app.MapGet("/consultPost", async (HttpContext content) =>
 {
     using var reader = new StreamReader(content.Request.Body);
     var body = await reader.ReadToEndAsync();
-    var info = JsonSerializer.Deserialize<skeleton.Posts>(body);
 
-    var posts = new Reaq.Posts(info.desc, info.Image, info.PostID, info.User, info.likes, info.date);
+    using var doc = JsonDocument.Parse(body);
+    int ID = doc.RootElement.GetProperty("ID").GetInt32();
+
+    var posts = new Reaq.Posts(null, ID);
 
     var returned = await posts.ConsultMessage();
     System.Console.WriteLine("this is returned: " + JsonSerializer.Serialize(returned));
@@ -53,9 +55,9 @@ app.MapGet("/consultPost", async (HttpContext content) =>
 });
 app.MapGet("/consultAll", async () =>
 {
-    var posts = new Reaq.Posts(null, null, 0, null, 0, null);
+    var posts = new Reaq.Posts(null, 0);
 
-    var returned = await posts.ConsultAll();
+    var returned = await posts.GetFeedAsync();
     System.Console.WriteLine("this is returned: " + JsonSerializer.Serialize(returned));
 
     return Results.Ok(returned);
@@ -79,10 +81,6 @@ app.MapPost("/cadUser", async (HttpContext content) =>
 
     return Results.Ok(result);
 });
-
-
-
-
 
 
 

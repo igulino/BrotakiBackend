@@ -26,12 +26,19 @@ namespace skeleton
         [FirestoreProperty]
         public int PostID { get; set; }
         [FirestoreProperty]
-        public user User { get; set; }
-        [FirestoreProperty]
         public int likes { get; set; }
         [FirestoreProperty]
-        public string date{ get; set; }
+        public string date { get; set; }
 
+    }
+
+    [FirestoreData]
+    public class PostsUser
+    {
+        [FirestoreProperty]
+        public int ID { get; set; }
+        [FirestoreProperty]
+        public Posts Posts { get; set; }
     }
 
     [FirestoreData]
@@ -47,6 +54,15 @@ namespace skeleton
         public int ID { get; set; }
 
     }
+    [FirestoreData]
+    public class FeedItem
+        {
+            [FirestoreProperty]
+            public skeleton.Posts Post { get; set; }
+            [FirestoreProperty]
+            public user User { get; set; }
+        }
+
 
 
 }

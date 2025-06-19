@@ -3,6 +3,7 @@ namespace Reaq
     using DBconnection;
     using Google.Cloud.Firestore;
     using Google.Type;
+    using skeleton;
 
     public class Users
     {
@@ -83,20 +84,17 @@ namespace Reaq
 
     public class Posts
     {
-        public static skeleton.Posts mes;
-        public Posts(string desc, string Image, int PostID, skeleton.user User, int likes, string date)
+        public static skeleton.PostsUser mes;
+        public Posts(skeleton.Posts posts, int ID)
         {
-            mes = new skeleton.Posts
+            mes = new skeleton.PostsUser
             {
-                desc = desc,
-                Image = Image,
-                PostID = PostID,
-                User = User,
-                likes = likes,
-                date = date
+                Posts = posts,
+                ID = ID
             };
         }
 
+        
         public async static Task<string> PostMessage()
         {
             try
@@ -105,16 +103,35 @@ namespace Reaq
                 {
                     throw new Exception("Firestore não foi inicializado corretamente.");
                 }
-
+                mes.ID = 32;
+                mes.Posts.PostID = 212;
                 DocumentReference doc = DBconnection.DB.db.Collection("message").Document();
+                Query doc2 = DBconnection.DB.db.Collection("usuário").WhereEqualTo("ID", mes.ID);
+                QuerySnapshot snapshot = await doc2.GetSnapshotAsync();
+                
+                if (snapshot.Documents.Count > 0)
+                {
+                    QuerySnapshot userSnapshot = await doc2.GetSnapshotAsync();
+                    var user = userSnapshot.Documents[0].ConvertTo<user>();
 
-                await doc.SetAsync(mes);
+                    System.Console.WriteLine("feito!");
+                    FeedItem a = new FeedItem
+                    {
+                        Post = mes.Posts,
+                        User = user
+                    };
+                    await doc.SetAsync(a);
+                    return "message sent";
+                }
 
-                return "message sent";
+
+                return "something went wrong...";
+                
 
             }
-            catch (System.Exception)
+            catch (System.Exception error)
             {
+                System.Console.WriteLine(error);
                 return "deu ruim";
                 throw;
             }
@@ -129,7 +146,7 @@ namespace Reaq
                     throw new Exception("Firestore não foi inicializado corretamente.");
                 }
 
-                var doc = DBconnection.DB.db.Collection("message").WhereEqualTo("User.ID", mes.User.ID);
+                var doc = DBconnection.DB.db.Collection("message").WhereEqualTo("ID", mes.ID);
 
                 var snapshot = await doc.GetSnapshotAsync();
 
@@ -149,40 +166,22 @@ namespace Reaq
             }
 
         }
-        public async Task<List<Dictionary<string, object>>> ConsultAll()
+
+
+        public async Task<List<FeedItem>> GetFeedAsync()
         {
-            try
+
+            var postSnapshots = await DBconnection.DB.db.Collection("message").GetSnapshotAsync();
+            List<FeedItem> list = new List<FeedItem>();
+            foreach (var item in postSnapshots)
             {
-                if (DBconnection.DB.db == null)
-                {
-                    throw new Exception("Firestore não foi inicializado corretamente.");
-                }
-
-                var doc = DBconnection.DB.db.Collection("message");
-                var snapshot = await doc.GetSnapshotAsync();
-
-                var lista = new List<Dictionary<string, object>>();
-
-                foreach (var item in snapshot.Documents)
-                {
-                    if (item.Exists)
-                    {
-                        var data = item.ToDictionary();
-                        data["id"] = item.Id;
-                        lista.Add(data);
-                    }
-                }
-
-                System.Console.WriteLine(snapshot);
-                return lista;
-
-            }
-            catch (System.Exception)
-            {
-                throw;
+                var i = item.ConvertTo<FeedItem>();
+                list.Add(i);
             }
 
+            return list;
         }
+
         
         
     }

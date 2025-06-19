@@ -1,0 +1,16 @@
+ var doc = DBconnection.DB.db.Collection("message");
+                var snapshot = await doc.GetSnapshotAsync();
+
+                var lista = new List<Dictionary<string, object>>();
+
+                foreach (var item in snapshot.Documents)
+                {
+                    if (item.Exists)
+                    {
+                        var data = item.ToDictionary();
+                        lista.Add(data);
+                    }
+                }
+
+                System.Console.WriteLine(snapshot);
+                return lista;
