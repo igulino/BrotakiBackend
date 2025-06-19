@@ -1,12 +1,39 @@
 via body
 
-/chat - post
+/CadPost - post
 (
     {
-        "MessageContent": "...",
-        "ImageURL": "...",
-        "PostMessageID": 1,
-        "UserID": 1
+	"desc": "10",
+	"Image": "cv",
+	"PostMessageID": 32,
+	"User": {"name": "al saddam",
+	"points": 23,
+	"image": "dwedwedweffkmlm324444444fdfdsffsf",
+	"ID": 32},
+	"likes": 33,
+	"date": "2025-06-18"
+    }
+)
+
+/consultAll - get() //consultar tds os posts
+
+/consultPost - get ({
+	"desc": "10",
+	"Image": "cv",
+	"PostID": 32,
+	"User": {"name": "al saddam",
+	"points": 23,
+	"image": "dwedwedweffkmlm324444444fdfdsffsf",
+	"ID": 32},
+	"likes": 33,
+	"date": "2025-06-18"})
+
+/cadUser - post(
+    {
+	"name": "al saddam",
+	"points": 23,
+	"image": "dwedwedweffkmlm324444444fdfdsffsf",
+	"ID": 32
     }
 )
 
@@ -26,3 +53,4 @@ via body
         "followerID": 1
     }
 )
+
