@@ -57,3 +57,4 @@ C:\Users\ligor\OneDrive\workspace\BrotAki\brotaki\bin\Debug\net8.0\Sprache.dll
 C:\Users\ligor\OneDrive\workspace\BrotAki\brotaki\bin\Debug\net8.0\FIreKey\brotaki.json
 C:\Users\ligor\OneDrive\workspace\BrotAki\BrotAki\bin\Debug\net8.0\Firebase.Storage.dll
 C:\Users\ligor\OneDrive\workspace\BrotAki\BrotAki\obj\Debug\net8.0\BrotAki.sourcelink.json
+C:\Users\ligor\OneDrive\workspace\BrotAki\BrotAki\bin\Debug\net8.0\BCrypt.Net-Next.dll

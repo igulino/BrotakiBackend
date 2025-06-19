@@ -6,16 +6,26 @@ using skeleton;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middlewares
+app.UseCors("AllowAll");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -23,7 +33,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Banco
 new DBconnection.DB();
+
+
 
 app.MapPost("/CadPost", async (HttpContext content) =>
 {
@@ -37,6 +51,21 @@ app.MapPost("/CadPost", async (HttpContext content) =>
 
     return Results.Ok(returned);
 });
+
+app.MapPost("/Login", async (HttpContext content) =>
+{
+    using var reader = new StreamReader(content.Request.Body);
+    var body = await reader.ReadToEndAsync();
+    var info = JsonSerializer.Deserialize<skeleton.user>(body);
+
+    var returned = await Reaq.Users.LoginUser(info.Password, info.name);
+    if (returned == 200)
+    {
+        return Results.Ok(returned);
+    }
+    return Results.Unauthorized();
+});
+
 
 app.MapGet("/consultPost", async (HttpContext content) =>
 {
@@ -78,7 +107,7 @@ app.MapPost("/cadUser", async (HttpContext content) =>
     var body = await reader.ReadToEndAsync();
     var info = JsonSerializer.Deserialize<skeleton.user>(body);
     var result = await Users.CadUser(info);
-
+    
     return Results.Ok(result);
 });
 

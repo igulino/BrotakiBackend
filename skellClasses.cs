@@ -52,6 +52,8 @@ namespace skeleton
         public string image { get; set; }
         [FirestoreProperty]
         public int ID { get; set; }
+        [FirestoreProperty]
+        public string Password { get; set; }
 
     }
     [FirestoreData]

@@ -15,10 +15,42 @@ namespace Reaq
             }
 
             DocumentReference userCreated = DBconnection.DB.db.Collection("usuário").Document();
-
+            Random rnd = new Random();
+            int idPost = rnd.Next(100000, 999999);
+            
+            string senha = user.Password;
+            string hash = BCrypt.Net.BCrypt.HashPassword(senha);
+            user.Password = hash;
+            user.ID = idPost;
+            
             await userCreated.SetAsync(user);
             return "200";
         }
+
+        public static async Task<int> LoginUser(string pass, string name)
+        {
+            if (DBconnection.DB.db == null)
+            {
+                return 400;
+            }
+            Query userLogin = DBconnection.DB.db.Collection("usuário").WhereEqualTo("name", name);
+            QuerySnapshot snapshot = await userLogin.GetSnapshotAsync();
+            if (snapshot.Documents.Count > 0)
+            {
+                var user = snapshot.Documents[0].ConvertTo<user>();
+                bool senhaCorreta = BCrypt.Net.BCrypt.Verify(pass, user.Password);
+                if (senhaCorreta)
+                {
+                    return 200;
+                }else
+                {
+                    return 400;
+                }
+                
+            }
+            return 400;
+        }
+
     }
     public class Follows
     {
@@ -103,8 +135,11 @@ namespace Reaq
                 {
                     throw new Exception("Firestore não foi inicializado corretamente.");
                 }
-                mes.ID = 32;
-                mes.Posts.PostID = 212;
+                
+                Random rnd = new Random();
+                int idPost = rnd.Next(100000, 999999);
+                mes.Posts.PostID = idPost;
+
                 DocumentReference doc = DBconnection.DB.db.Collection("message").Document();
                 Query doc2 = DBconnection.DB.db.Collection("usuário").WhereEqualTo("ID", mes.ID);
                 QuerySnapshot snapshot = await doc2.GetSnapshotAsync();
