@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BrotAki")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cee7ba41de96d7c947d92a884acac6d133379496")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6813ef249b8b31e8fbbcf88ab12c9f36d7219287")]
 [assembly: System.Reflection.AssemblyProductAttribute("BrotAki")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BrotAki")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

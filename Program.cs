@@ -38,7 +38,7 @@ app.UseHttpsRedirection();
 new DBconnection.DB();
 
 
-
+//posts
 app.MapPost("/CadPost", async (HttpContext content) =>
 {
     using var reader = new StreamReader(content.Request.Body);
@@ -50,20 +50,6 @@ app.MapPost("/CadPost", async (HttpContext content) =>
     var returned = await Reaq.Posts.PostMessage();
 
     return Results.Ok(returned);
-});
-
-app.MapPost("/Login", async (HttpContext content) =>
-{
-    using var reader = new StreamReader(content.Request.Body);
-    var body = await reader.ReadToEndAsync();
-    var info = JsonSerializer.Deserialize<skeleton.user>(body);
-
-    var returned = await Reaq.Users.LoginUser(info.Password, info.name);
-    if (returned == 200)
-    {
-        return Results.Ok(returned);
-    }
-    return Results.Unauthorized();
 });
 
 
@@ -91,6 +77,38 @@ app.MapGet("/consultAll", async () =>
 
     return Results.Ok(returned);
 });
+
+
+
+
+
+//users
+
+app.MapPost("/Login", async (HttpContext content) =>
+{
+    using var reader = new StreamReader(content.Request.Body);
+    var body = await reader.ReadToEndAsync();
+    var info = JsonSerializer.Deserialize<skeleton.user>(body);
+
+    var returned = await Reaq.Users.LoginUser(info.Password, info.name);
+    if (returned.name == info.name)
+    {
+        return Results.Ok(returned);
+    }
+    return Results.Unauthorized();
+});
+
+
+
+
+
+//follows
+
+
+
+
+
+
 
 
 

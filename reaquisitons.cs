@@ -17,7 +17,7 @@ namespace Reaq
             DocumentReference userCreated = DBconnection.DB.db.Collection("usuário").Document();
             Random rnd = new Random();
             int idPost = rnd.Next(100000, 999999);
-            
+
             string senha = user.Password;
             string hash = BCrypt.Net.BCrypt.HashPassword(senha);
             user.Password = hash;
@@ -27,28 +27,35 @@ namespace Reaq
             return "200";
         }
 
-        public static async Task<int> LoginUser(string pass, string name)
+        public static async Task<skeleton.user> LoginUser(string pass, string name)
         {
-            if (DBconnection.DB.db == null)
+            try
             {
-                return 400;
-            }
-            Query userLogin = DBconnection.DB.db.Collection("usuário").WhereEqualTo("name", name);
-            QuerySnapshot snapshot = await userLogin.GetSnapshotAsync();
-            if (snapshot.Documents.Count > 0)
-            {
-                var user = snapshot.Documents[0].ConvertTo<user>();
-                bool senhaCorreta = BCrypt.Net.BCrypt.Verify(pass, user.Password);
-                if (senhaCorreta)
+                Query userLogin = DBconnection.DB.db.Collection("usuário").WhereEqualTo("name", name);
+                QuerySnapshot snapshot = await userLogin.GetSnapshotAsync();
+                if (snapshot.Documents.Count > 0)
                 {
-                    return 200;
-                }else
-                {
-                    return 400;
+                    var user = snapshot.Documents[0].ConvertTo<user>();
+                    bool senhaCorreta = BCrypt.Net.BCrypt.Verify(pass, user.Password);
+                    if (senhaCorreta)
+                    {
+                        return user;
+                    }
+                    else
+                    {
+                        throw new Exception("Senha incorreta.");
+                    }
+
                 }
+                throw new Exception("Usúario não encontrado.");
                 
             }
-            return 400;
+            catch (System.Exception err)
+            {
+                throw new Exception("erro: ", err);
+                throw;
+            }
+            
         }
 
     }
