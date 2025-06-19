@@ -1,0 +1,28 @@
+via body
+
+/chat - post
+(
+    {
+        "MessageContent": "...",
+        "ImageURL": "...",
+        "PostMessageID": 1,
+        "UserID": 1
+    }
+)
+
+/follow - post 
+(
+    
+    {
+        "followedID": 1,
+        "followerID": 1
+    }
+)
+
+/unfollow - delete
+(
+    {
+        "followedID": 1,
+        "followerID": 1
+    }
+)
