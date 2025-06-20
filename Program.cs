@@ -1,11 +1,22 @@
 using DBconnection;
 using Firebase.Storage;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Reaq;
 using skeleton;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 5_000_000; // 5 MB
+});
+
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 5_000_000; // 5 MB
+});
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -51,8 +62,6 @@ app.MapPost("/CadPost", async (HttpContext content) =>
 
     return Results.Ok(returned);
 });
-
-
 app.MapGet("/consultPost", async (HttpContext content) =>
 {
     using var reader = new StreamReader(content.Request.Body);
@@ -79,9 +88,6 @@ app.MapGet("/consultAll", async () =>
 });
 
 
-
-
-
 //users
 
 app.MapPost("/Login", async (HttpContext content) =>
@@ -97,26 +103,6 @@ app.MapPost("/Login", async (HttpContext content) =>
     }
     return Results.Unauthorized();
 });
-
-
-
-
-
-//follows
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.MapPost("/cadUser", async (HttpContext content) =>
 {
     Console.WriteLine("this is env: " + Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"));
@@ -131,9 +117,7 @@ app.MapPost("/cadUser", async (HttpContext content) =>
 
 
 
-
-
-
+//follows
 
 app.MapPost("/follow", async (HttpContext content) =>
 {
